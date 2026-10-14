@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NATO SHOP | فروشگاه آنلاین</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f5fb;color:#20243a;
+font-family:Tahoma,Arial,sans-serif}
+header{background:#15172b;color:white;padding:22px 16px}
+header h1{margin:0 0 8px;color:#a99aff}
+header p{margin:0;font-size:13px}
+main{max-width:900px;margin:auto;padding:20px 14px}
+.search,input,textarea{width:100%;padding:13px;border:1px solid #ddd;
+border-radius:10px;font:inherit;margin:8px 0}
+h2{font-size:19px}
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.product,.panel{background:white;padding:15px;border-radius:14px;
+box-shadow:0 3px 14px #17172b0b}
+.pic{height:100px;background:#eeebff;border-radius:10px;
+display:grid;place-items:center;font-size:42px}
+.product h3{font-size:15px}
+.price{font-weight:bold;color:#6c50df}
+button{border:0;background:#6c50df;color:white;padding:12px;
+border-radius:10px;font:inherit;cursor:pointer}
+.product button{width:100%}
+.panel{margin-top:20px}
+small{color:#686b7c;line-height:2}
+footer{text-align:center;padding:25px;color:#777;font-size:12px}
+@media(min-width:650px){.products{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header>
+<h1>NATO SHOP 🛍️</h1>
+<p>به فروشگاه آنلاین ناتو خوش آمدید</p>
+</header>
+<main>
+<input id="search" class="search" placeholder="جست‌وجوی محصول..."
+oninput="showProducts()">
+<h2>محصولات فروشگاه</h2>
+<div class="products" id="products"></div>
+
+<section class="panel">
+<h2>🛒 سبد خرید</h2>
+<div id="cart">سبد خرید شما خالی است.</div>
+<p>مجموع: <strong id="total">۰</strong> تومان</p>
+</section>
+
+<section class="panel">
+<h2>📝 ثبت سفارش</h2>
+<input id="customer" placeholder="نام شما">
+<input id="contact" placeholder="شماره تماس یا راه ارتباطی">
+<textarea id="address" placeholder="توضیحات سفارش (اختیاری)"></textarea>
+<label>روش پرداخت:</label>
+<select id="payment" class="search">
+<option value="رسید پرداخت">واریز و ارسال رسید</option>
+<option value="پرداخت آنلاین">پرداخت آنلاین</option>
+</select>
+<button onclick="order()">ثبت درخواست سفارش</button>
+<p id="message"></p>
+<small>این نسخه نمایشی است؛ سفارش‌ها هنوز به سرور ارسال نمی‌شوند
+و پرداخت آنلاین هنوز متصل نیست.</small>
+</section>
+</main>
+<footer>© NATO SHOP</footer>
+<script>
+const items=[
+{id:1,name:"محصول نمونه ۱",price:35000,icon:"🎁"},
+{id:2,name:"محصول نمونه ۲",price:50000,icon:"📦"},
+{id:3,name:"محصول نمونه ۳",price:75000,icon:"✨"},
+{id:4,name:"محصول نمونه ۴",price:100000,icon:"🛍️"}
+];
+const cart={};
+const money=n=>n.toLocaleString("fa-IR");
+function showProducts(){
+const q=document.getElementById("search").value.trim().toLowerCase();
+document.getElementById("products").innerHTML=items
+.filter(p=>p.name.toLowerCase().includes(q))
+.map(p=>`<article class="product">
+<div class="pic">${p.icon}</div><h3>${p.name}</h3>
+<p class="price">${money(p.price)} تومان</p>
+<button onclick="add(${p.id})">افزودن به سبد</button>
+</article>`).join("");
+}
+function add(id){cart[id]=(cart[id]||0)+1;showCart()}
+function showCart(){
+const chosen=items.filter(p=>cart[p.id]);
+document.getElementById("cart").innerHTML=chosen.length?
+chosen.map(p=>`${p.name} × ${money(cart[p.id])}
+<button onclick="removeItem(${p.id})">حذف</button>`).join("<hr>"):
+"سبد خرید شما خالی است.";
+document.getElementById("total").textContent=money(
+chosen.reduce((s,p)=>s+p.price*cart[p.id],0));
+}
+function removeItem(id){delete cart[id];showCart()}
+function order(){
+const name=document.getElementById("customer").value.trim();
+const contact=document.getElementById("contact").value.trim();
+const chosen=items.filter(p=>cart[p.id]);
+const message=document.getElementById("message");
+if(!name||!contact||!chosen.length){
+message.textContent="نام، راه ارتباطی و حداقل یک محصول را وارد کنید.";
+return;
+}
+message.textContent="فرم آزمایشی تکمیل شد؛ برای دریافت واقعی سفارش باید سایت به سرور یا سرویس ثبت سفارش متصل شود.";
+}
+showProducts();showCart();
+</script>
+</body>
+</html>
